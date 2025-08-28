@@ -29,38 +29,61 @@ const BookAppointment = () => {
         '05:00 PM', '06:00 PM'
     ];
 
-    const handleConfirm = () => {
-  console.log("Confirm button clicked!"); // cek klik
-  const templateParams = {
-    name: formData.name,
-    phone: formData.phone,
-    date: formData.date,
-    time: formData.time,
-    service: formData.service,
-  };
+const handleConfirm = async () => {
+  try {
+    console.log("Confirm button clicked!"); // cek klik
+    const templateParams = {
+      name: formData.name,
+      phone: formData.phone,
+      date: formData.date,
+      time: formData.time,
+      service: formData.service,
+    };
 
-  emailjs.send(
-    "service_17h9dss",
-    "template_jvwnxwh",
-    templateParams,
-    "vfI40PCcGoAzTXKJ_"
-  )
-  .then(() => {
-    alert("Booking berhasil dikirim ke email!");
-  })
-  .catch((err) => {
-    console.error("FAILED...", err);
+    emailjs.send(
+      "service_17h9dss",
+      "template_jvwnxwh",
+      templateParams,
+      "vfI40PCcGoAzTXKJ_"
+    );
+    //   .then(() => {
+    //     alert("Booking berhasil dikirim ke email!");
+    //   })
+    //   .catch((err) => {
+    //     console.error("FAILED...", err);
+    //     alert("Booking gagal, cek console log.");
+    //   });
+
+    //    fetch("https://script.google.com/macros/s/AKfycbz9GvY-NRWhF5f5BYWU72TJsnIiGnGo3ahEN2GQLnJbvEX0R7wvadJyXZ-f7W5FZryR-Q/exec", {
+    //     method: "POST",
+    //     body: JSON.stringify(templateParams),
+    //     headers: { "Content-Type": "application/json" },
+    //   })
+    //   .then(() => alert("Booking berhasil tersimpan di Google Sheet & terkirim ke email!"))
+    //   .catch((err) => console.error("Error:", err));
+
+    // Simpan ke Google Sheet
+    const res = await fetch(
+      "https://script.google.com/macros/s/AKfycbwEEBBMqrrompCrRSiQ75AYT9ivcbIk3vME-xJSiFcNVoQeUv9GyRXwwj7JflD5R9pO5g/exec",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(templateParams),
+      }
+    );
+
+    const result = await res.json();
+    if (result.status === "success") {
+      alert("Booking berhasil tersimpan di Google Sheet & terkirim ke email!");
+    } else {
+      alert("Booking gagal tersimpan di Google Sheet!");
+    }
+  } catch (err) {
+    console.error("Error:", err);
     alert("Booking gagal, cek console log.");
-  });
+  }
+};
 
-   fetch("https://script.google.com/macros/s/AKfycbz9GvY-NRWhF5f5BYWU72TJsnIiGnGo3ahEN2GQLnJbvEX0R7wvadJyXZ-f7W5FZryR-Q/exec", {
-    method: "POST",
-    body: JSON.stringify(templateParams),
-    headers: { "Content-Type": "application/json" },
-  })
-  .then(() => alert("Booking berhasil tersimpan di Google Sheet & terkirim ke email!"))
-  .catch((err) => console.error("Error:", err));
- };
 
 
 
