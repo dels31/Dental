@@ -30,39 +30,29 @@ const BookAppointment = () => {
     ];
 
 const handleConfirm = async () => {
-  try {
-    console.log("Confirm button clicked!"); // cek klik
-    const templateParams = {
-      name: formData.name,
-      phone: formData.phone,
-      date: formData.date,
-      time: formData.time,
-      service: formData.service,
-    };
+  if (!formData.name || !formData.phone || !formData.date || !formData.time) {
+    alert("Please fill all required fields!");
+    return;
+  }
 
-    emailjs.send(
+  const templateParams = {
+    name: formData.name,
+    phone: formData.phone,
+    date: formData.date,
+    time: formData.time,
+    service: formData.service,
+  };
+
+  try {
+    // Kirim email
+    await emailjs.send(
       "service_17h9dss",
       "template_jvwnxwh",
       templateParams,
       "vfI40PCcGoAzTXKJ_"
     );
-    //   .then(() => {
-    //     alert("Booking berhasil dikirim ke email!");
-    //   })
-    //   .catch((err) => {
-    //     console.error("FAILED...", err);
-    //     alert("Booking gagal, cek console log.");
-    //   });
 
-    //    fetch("https://script.google.com/macros/s/AKfycbz9GvY-NRWhF5f5BYWU72TJsnIiGnGo3ahEN2GQLnJbvEX0R7wvadJyXZ-f7W5FZryR-Q/exec", {
-    //     method: "POST",
-    //     body: JSON.stringify(templateParams),
-    //     headers: { "Content-Type": "application/json" },
-    //   })
-    //   .then(() => alert("Booking berhasil tersimpan di Google Sheet & terkirim ke email!"))
-    //   .catch((err) => console.error("Error:", err));
-
-    // Simpan ke Google Sheet
+    // Kirim ke Google Sheet
     const res = await fetch(
       "https://script.google.com/macros/s/AKfycbzSNTfi1B1ZwMHPFCqcBQlEkTRi9sijUnBI0RqKaELRHdDYktivNKfjhv5X99HwoWTDoQ/exec",
       {
@@ -73,16 +63,31 @@ const handleConfirm = async () => {
     );
 
     const result = await res.json();
+
     if (result.status === "success") {
-      alert("Booking berhasil tersimpan di Google Sheet & terkirim ke email!");
+      alert("Booking berhasil! Data terkirim ke email & tersimpan di Google Sheet.");
+      
+      // Reset form
+      setFormData({
+        name: "",
+        phone: "",
+        date: "",
+        time: "",
+        service: "General Checkup",
+      });
+      
+      // Kembali ke step 1
+      setActiveStep(1);
     } else {
-      alert("Booking gagal tersimpan di Google Sheet!");
+      alert("Gagal menyimpan ke Google Sheet. Cek console log.");
+      console.error(result.message);
     }
   } catch (err) {
     console.error("Error:", err);
     alert("Booking gagal, cek console log.");
   }
 };
+
 
 
 
