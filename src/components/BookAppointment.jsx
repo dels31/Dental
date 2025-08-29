@@ -64,7 +64,7 @@ const handleConfirm = async () => {
 
     // Simpan ke Google Sheet
     const res = await fetch(
-      "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbwTfScmLaXiNI7_e2vRyqKxjEpY8dMh0IjzqIM3KCNpimyPB4zq-4de1MtzHDkhlpc09w/exec",
+      "https://script.google.com/macros/s/AKfycbzSNTfi1B1ZwMHPFCqcBQlEkTRi9sijUnBI0RqKaELRHdDYktivNKfjhv5X99HwoWTDoQ/exec",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
