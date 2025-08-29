@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-
+import process from "process";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -7,9 +7,13 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 🔍 Debug ENV (AMAN, tidak print full key)
+    console.log("GOOGLE_SHEET_ID:", process.env.GOOGLE_SHEET_ID);
+    console.log("GOOGLE_CLIENT_EMAIL exists?", !!process.env.GOOGLE_CLIENT_EMAIL);
+    console.log("GOOGLE_PRIVATE_KEY length:", process.env.GOOGLE_PRIVATE_KEY?.length);
+
     const { name, email, phone, date, time, service } = req.body;
 
-    // 🔑 Autentikasi Google API
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -20,13 +24,11 @@ export default async function handler(req, res) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    // 📄 ID spreadsheet (ganti dengan ID sheet kamu)
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
-    // 📝 Tambahkan ke sheet
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: "Sheet1!A:F", // sesuaikan dengan nama sheet
+      range: "Sheet1!A:F",
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [[name, email, phone, date, time, service, new Date().toISOString()]],
