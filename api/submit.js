@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { name, email, phone, date, time, service } = req.body;
+    const { name, phone, date, time, service } = req.body;
 
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
         valueInputOption: "RAW",
         requestBody: {
           values: [
-            ["Name", "Email", "Phone", "Date", "Time", "Service", "Timestamp"],
+            ["Name", "Phone", "Date", "Time", "Service", "Timestamp"],
           ],
         },
       });
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
       range: "Sheet1!A:G",
       valueInputOption: "USER_ENTERED",
       requestBody: {
-        values: [[name, email, phone, date, time, service, new Date().toISOString()]],
+        values: [[name, phone, date, time, service, new Date().toISOString()]],
       },
     });
 
