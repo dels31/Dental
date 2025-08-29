@@ -7,11 +7,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 🔍 Debug ENV (AMAN, tidak print full key)
-    console.log("GOOGLE_SHEET_ID:", process.env.GOOGLE_SHEET_ID);
-    console.log("GOOGLE_CLIENT_EMAIL exists?", !!process.env.GOOGLE_CLIENT_EMAIL);
-    console.log("GOOGLE_PRIVATE_KEY length:", process.env.GOOGLE_PRIVATE_KEY?.length);
-
     const { name, email, phone, date, time, service } = req.body;
 
     const auth = new google.auth.GoogleAuth({
@@ -23,12 +18,32 @@ export default async function handler(req, res) {
     });
 
     const sheets = google.sheets({ version: "v4", auth });
-
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
+    // 🔎 Cek apakah Sheet1 kosong
+    const checkSheet = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: "Sheet1!A1:A1",
+    });
+
+    if (!checkSheet.data.values) {
+      // ✅ Kalau kosong, buat header row
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: "Sheet1!A1:G1",
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [
+            ["Name", "Email", "Phone", "Date", "Time", "Service", "Timestamp"],
+          ],
+        },
+      });
+    }
+
+    // 🔹 Append data baru
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: "Sheet1!A:F",
+      range: "Sheet1!A:G",
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [[name, email, phone, date, time, service, new Date().toISOString()]],

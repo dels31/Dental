@@ -64,7 +64,7 @@ const BookAppointment = () => {
 
       const result = await res.json();
 
-      if (result.status === "success") {
+      if (result.success) {
         alert("Booking berhasil! Data terkirim ke email & Google Sheet.");
 
         setFormData({
