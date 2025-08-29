@@ -37,7 +37,7 @@ const BookAppointment = () => {
     const nextStep = () => setActiveStep(prev => prev + 1);
     const prevStep = () => setActiveStep(prev => prev - 1);
 
-    const API_URL = "https://script.google.com/macros/s/AKfycbzgw49ADvohISzfszduSQECm1PbGXDCVXabBpjUO1Av-4e0RZ85U322uE4j3HweGirfvA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyP3Rb1PX6NxS7bUV9Xlmn7DaT8G6OERIreAboibXPqGisl1N1Ho5G0GmzPq4l71t9V8A/exec";
 
 
     const handleConfirm = async () => {
