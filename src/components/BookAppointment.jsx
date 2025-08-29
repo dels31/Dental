@@ -7,6 +7,7 @@ import emailjs from "emailjs-com";
 
 const BookAppointment = () => {
 
+  
     const [activeStep, setActiveStep] = useState(1);
     const [formData, setFormData] = useState({
         name: '',
@@ -28,70 +29,6 @@ const BookAppointment = () => {
         '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM',
         '05:00 PM', '06:00 PM'
     ];
-
-const handleConfirm = async () => {
-  if (!formData.name || !formData.phone || !formData.date || !formData.time) {
-    alert("Please fill all required fields!");
-    return;
-  }
-
-  const templateParams = {
-    name: formData.name,
-    phone: formData.phone,
-    date: formData.date,
-    time: formData.time,
-    service: formData.service,
-  };
-
-  try {
-    // Kirim email
-    await emailjs.send(
-      "service_17h9dss",
-      "template_jvwnxwh",
-      templateParams,
-      "vfI40PCcGoAzTXKJ_"
-    );
-
-    // Kirim ke Google Sheet
-    const res = await fetch(
-      "https://script.google.com/macros/s/AKfycbzo6xywozrJXBQffyc5D4zB5ACsXbNrDLoT7OzK-2cmCamOS2akFoSEkcjTsb534bDIuA/exec",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(templateParams),
-      }
-    );
-
-    const result = await res.json();
-
-    if (result.status === "success") {
-      alert("Booking berhasil! Data terkirim ke email & tersimpan di Google Sheet.");
-      
-      // Reset form
-      setFormData({
-        name: "",
-        phone: "",
-        date: "",
-        time: "",
-        service: "General Checkup",
-      });
-      
-      // Kembali ke step 1
-      setActiveStep(1);
-    } else {
-      alert("Gagal menyimpan ke Google Sheet. Cek console log.");
-      console.error(result.message);
-    }
-  } catch (err) {
-    console.error("Error:", err);
-    alert("Booking gagal, cek console log.");
-  }
-};
-
-
-
-
-
     const handleInputChange = (e) => {
         const { name, value } = e.target; 
         setFormData(prev => ({...prev, [name]: value}));
@@ -99,6 +36,57 @@ const handleConfirm = async () => {
 
     const nextStep = () => setActiveStep(prev => prev + 1);
     const prevStep = () => setActiveStep(prev => prev - 1);
+
+    const API_URL = "https://script.google.com/macros/s/AKfycbzgw49ADvohISzfszduSQECm1PbGXDCVXabBpjUO1Av-4e0RZ85U322uE4j3HweGirfvA/exec";
+
+
+    const handleConfirm = async () => {
+    if (!formData.name || !formData.phone || !formData.date || !formData.time) {
+      alert("Please fill all required fields!");
+      return;
+    }
+
+    try {
+      // Kirim email
+      await emailjs.send(
+        "service_17h9dss",
+        "template_jvwnxwh",
+        formData,
+        "vfI40PCcGoAzTXKJ_"
+      );
+
+      // Kirim ke Serverless Proxy
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await res.json();
+
+      if (result.status === "success") {
+        alert("Booking berhasil! Data terkirim ke email & Google Sheet.");
+
+        setFormData({
+          name: "",
+          phone: "",
+          date: "",
+          time: "",
+          service: "General Checkup",
+        });
+        setActiveStep(1);
+      } else {
+        alert("Gagal submit, cek console log.");
+        console.error(result);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Booking gagal, cek console log.");
+    }
+  };
+
+    
+
 
   return (
     <section id='book' className='scroll-mt-20 min-h-screen bg-gradient-to-br from-sky-50 to-sky-50 py-12 px-4'>
