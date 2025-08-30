@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { FaCalendarAlt, FaChevronRight, FaClock, FaPhone, FaUser, FaTooth } from 'react-icons/fa';
 import { GiToothbrush } from 'react-icons/gi';
 import emailjs from "emailjs-com";
-import { motion, AnimatePresence } from 'framer-motion';
+import {  AnimatePresence } from 'framer-motion';
 
 
   
@@ -162,9 +162,14 @@ const BookAppointment = () => {
                                         type="tel"
                                         name='phone'
                                         value={formData.phone}
-                                        onChange={handleInputChange}
+                                        onChange={(e) => {
+                                        const onlyNums = e.target.value.replace(/[^0-9]/g, ""); 
+                                        setFormData({ ...formData, phone: onlyNums });
+                                        }}
                                         placeholder='Phone number'
                                         className='w-full p-4 pl-12 border-2 border-gray-200 rounded-xl focus:ring-2 focus:border-sky-500 focus:ring-sky-200 outline-none transition'
+                                        pattern="[0-9]*"    
+                                        inputMode="numeric"
                                         />
                                         <FaPhone  className='absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400'/>
                                         
