@@ -3,11 +3,15 @@ import React, { useState } from 'react'
 import { FaCalendarAlt, FaChevronRight, FaClock, FaPhone, FaUser, FaTooth } from 'react-icons/fa';
 import { GiToothbrush } from 'react-icons/gi';
 import emailjs from "emailjs-com";
+import { motion, AnimatePresence } from 'framer-motion';
 
+
+  
 
 const BookAppointment = () => {
 
-  
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
     const [activeStep, setActiveStep] = useState(1);
     const [formData, setFormData] = useState({
         name: '',
@@ -17,11 +21,7 @@ const BookAppointment = () => {
         service: 'General Checkup'
     });
 
-    const [modal, setModal] = useState({
-    open: false,
-    title: "",
-    message: "",
-    });
+    
 
     const services = [
         'General Checkup',
@@ -46,14 +46,12 @@ const BookAppointment = () => {
 
     // const API_URL = "https://script.google.com/macros/s/AKfycbyYCNM6r0L-9qpif3skrR4fW0uGfwAYwd-2yc39jjQQxX_MK9vjAFljjSj5oMsClBkV7Q/exec";
 
+    
 
     const handleConfirm = async () => {
     if (!formData.name || !formData.phone || !formData.date || !formData.time) {
-      setModal({
-        open: true,
-        title: "Peringatan ⚠️",
-        message: "Semua field harus diisi sebelum booking!",
-      });
+      setModalMessage(
+        "Semua field harus diisi sebelum booking!")
       return;
     }
 
@@ -76,12 +74,7 @@ const BookAppointment = () => {
       const result = await res.json();
 
       if (result.success) {
-        setModal({
-          open: true,
-          title: "Berhasil 🎉",
-          message: "Appointment Berhasil disimpan.",
-        });
-
+        setModalMessage("✅ Appointment berhasil disimpan!");
         setFormData({
           name: "",
           phone: "",
@@ -91,19 +84,12 @@ const BookAppointment = () => {
         });
         setActiveStep(1);
       } else {
-         setModal({
-          open: true,
-          title: "Gagal ❌",
-          message: "Booking gagal, cek console log.",
-        });
+        setModalMessage("❌ Gagal menyimpan appointment!");
       }
-    } catch (err) {
-      console.error("Error:", err);
-      setModal({
-        open: true,
-        title: "Error 🚨",
-        message: "Terjadi kesalahan pada server.",
-      });
+    } catch (error) {
+      setModalMessage("⚠️ Terjadi kesalahan server!");
+    } finally {
+      setShowModal(true);
     }
   };
 
@@ -289,21 +275,33 @@ const BookAppointment = () => {
             </div>
         </div>
 
-        {/* ✅ Custom Modal */}
-      {modal.open && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-80 text-center">
-            <h2 className="text-lg font-bold mb-2">{modal.title}</h2>
-            <p className="text-gray-600 mb-4">{modal.message}</p>
-            <button
-              onClick={() => setModal({ ...modal, open: false })}
-              className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg"
+        {/* Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-2xl shadow-xl text-center w-80"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
+              <p className="text-lg font-semibold">{modalMessage}</p>
+              <button
+                onClick={() => setShowModal(false)}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                OK
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
