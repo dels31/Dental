@@ -50,7 +50,7 @@ const BookAppointment = () => {
 
     const handleConfirm = async () => {
     if (!formData.name || !formData.phone || !formData.date || !formData.time) {
-      setModalMessage("Semua field harus diisi sebelum booking!")
+      setModalMessage("⚠️ Semua field wajib diisi sebelum booking!");
       setShowModal(true);
       return;
     }
