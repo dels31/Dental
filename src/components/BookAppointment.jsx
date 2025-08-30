@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { FaCalendarAlt, FaChevronRight, FaClock, FaPhone, FaUser, FaTooth } from 'react-icons/fa';
 import { GiToothbrush } from 'react-icons/gi';
 import emailjs from "emailjs-com";
-import {  AnimatePresence } from 'framer-motion';
+import {  motion, AnimatePresence } from 'framer-motion';
 
 
   
