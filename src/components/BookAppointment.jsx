@@ -79,7 +79,7 @@ const BookAppointment = () => {
         setModal({
           open: true,
           title: "Berhasil 🎉",
-          message: "Booking berhasil! Data terkirim ke email & Google Sheet.",
+          message: "Appointment Berhasil disimpan.",
         });
 
         setFormData({
@@ -288,7 +288,7 @@ const BookAppointment = () => {
                 </div>
             </div>
         </div>
-        
+
         {/* ✅ Custom Modal */}
       {modal.open && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
