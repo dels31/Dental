@@ -16,6 +16,13 @@ const BookAppointment = () => {
         time: '',
         service: 'General Checkup'
     });
+
+    const [modal, setModal] = useState({
+    open: false,
+    title: "",
+    message: "",
+    });
+
     const services = [
         'General Checkup',
         'Teeth Cleaning',
@@ -37,12 +44,16 @@ const BookAppointment = () => {
     const nextStep = () => setActiveStep(prev => prev + 1);
     const prevStep = () => setActiveStep(prev => prev - 1);
 
-    const API_URL = "https://script.google.com/macros/s/AKfycbyYCNM6r0L-9qpif3skrR4fW0uGfwAYwd-2yc39jjQQxX_MK9vjAFljjSj5oMsClBkV7Q/exec";
+    // const API_URL = "https://script.google.com/macros/s/AKfycbyYCNM6r0L-9qpif3skrR4fW0uGfwAYwd-2yc39jjQQxX_MK9vjAFljjSj5oMsClBkV7Q/exec";
 
 
     const handleConfirm = async () => {
     if (!formData.name || !formData.phone || !formData.date || !formData.time) {
-      alert("Please fill all required fields!");
+      setModal({
+        open: true,
+        title: "Peringatan ⚠️",
+        message: "Semua field harus diisi sebelum booking!",
+      });
       return;
     }
 
@@ -65,7 +76,11 @@ const BookAppointment = () => {
       const result = await res.json();
 
       if (result.success) {
-        alert("Booking berhasil! Data terkirim ke email & Google Sheet.");
+        setModal({
+          open: true,
+          title: "Berhasil 🎉",
+          message: "Booking berhasil! Data terkirim ke email & Google Sheet.",
+        });
 
         setFormData({
           name: "",
@@ -76,12 +91,19 @@ const BookAppointment = () => {
         });
         setActiveStep(1);
       } else {
-        alert("Gagal submit, cek console log.");
-        console.error(result);
+         setModal({
+          open: true,
+          title: "Gagal ❌",
+          message: "Booking gagal, cek console log.",
+        });
       }
     } catch (err) {
       console.error("Error:", err);
-      alert("Booking gagal, cek console log.");
+      setModal({
+        open: true,
+        title: "Error 🚨",
+        message: "Terjadi kesalahan pada server.",
+      });
     }
   };
 
@@ -266,6 +288,22 @@ const BookAppointment = () => {
                 </div>
             </div>
         </div>
+        
+        {/* ✅ Custom Modal */}
+      {modal.open && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-80 text-center">
+            <h2 className="text-lg font-bold mb-2">{modal.title}</h2>
+            <p className="text-gray-600 mb-4">{modal.message}</p>
+            <button
+              onClick={() => setModal({ ...modal, open: false })}
+              className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
